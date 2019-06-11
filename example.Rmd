@@ -240,7 +240,7 @@ pp_check(brm1, type = "stat")
 
 Next we could check for influential observations with help of the `loo` package. 
 `loo` performs approximate leave-one-out cross validation and thereby provides information about the importance of single observations on the model-predictions.
-If observations have high `PSIS-LOO` statistics (< .7), they are influential and should therefore be investigated further.
+If observations have high `PSIS-LOO` statistics (> .7), they are influential and should therefore be investigated further.
 Moreover, this results in information-criteria not being reliable as they are performing approximate leave-one-out cross validation, that is heavily influenced by influential values.
 In these cases we could do k-fold cross validation by hand instead.
 
@@ -291,7 +291,7 @@ If we have a lot of data, the prior that we specify will not really matter as we
 
 However, for the random correlation we only have few observations. 
 This is the reason why `lme4` rejects to give us an estimate (or rather gives us the uninterpretable 1), as we do have any prior information that we can use and the data do not give us an interpretable answer, therefore it just cannot be estimated.
-In the bayesian framework, we already have the prior to work with, saying that it might be anything between -1 and 1, and this is exactly what we get back here.
+In the Bayesian framework, we already have the prior to work with, saying that it might be anything between -1 and 1, and this is exactly what we get back here.
 
 This is an important point to realize: When we have a lot of data, the prior will not influence the estimates much, but if we do _not_ it can still help our inference by allowing us to include terms in the model that we might not have a lot of information on without simplifying the model. 
 In this case, where we want to keep the correlation in there to regularize our inference on the fixed effects but we might not know beforehand whether it can be estimated we can just keep it in and stop worrying about it as the we will just get the prior back when the data are not giving us any new information.
@@ -312,15 +312,15 @@ Notice that even though there is a clear effect, it is numerically rather small 
 # Model/Effect evaluation
 
 With numeric effects or factors with only 2 levels, we can directly use the posterior as a test for whether an effect is present.
-We can calculate a bayesian p-value (the name is confusing it does _not_ have the same interpretation as a frequentist p-value)
+We can calculate a Bayesian p-value (the name is confusing it does _not_ have the same interpretation as a frequentist p-value)
 
-```{r bayesian-p-value}
+```{r Bayesian-p-value}
 gng_post <- c(posterior_samples(brm1, pars = "b_gng_cond"))[[1]]
 p_val_gng <- mean(gng_post < 0)
 p_val_gng
 ```
 
-In this case the p-value would be <.00025 (because it is based on 4000 samples; 1000 per chain that have 0 observations that would suggest that the effect is in the opposite direction that we would expect).
+In this case the p-value would be <.00025 (because it is based on 4000 samples, 1000 per chain; we  have 0 observations that would suggest that the effect is in the opposite direction than we would have expected).
 
 ```{r fit_brm0, options}
 prior_list_brm0 <- c(set_prior('normal(0, 50)', class = 'Intercept'),
@@ -348,7 +348,7 @@ brm1 <- add_waic(brm1)
 compare_ic(brm0, brm1, ic = "waic")
 ```
 
-For bayes-factors we need many more iterations in the chains.
+For Bayes-Factors, we need many more iterations in the chains.
 
 
 ```{r bayes_factor_custom}
@@ -388,14 +388,14 @@ bf_10_def <- bayes_factor(brm1_def, brm0_def)
 
 Now the BF is `r round(bf_10_def$bf, 2)` which is even larger.
 
-As can be seen here, the bayes factors are really huge in both cases. 
+As can be seen here, the Bayes Factors are really huge in both cases. 
 Notice how `loo-ic` (predictive performance measurement) and Bayes-Factor yield different conclusions about the importance of condition here. 
 This is (sort of) in line with what we observed in the fitted vs. predicted `marginal_effects` plot.
 
 
 # Model families
 
-As said earlier, another advantage of `brms` is that we are not restricted to normal/gaussian models.
+As said earlier, another advantage of `brms` is that we are not restricted to normal/Gaussian models.
 In fact, in this situation the response distribution does not look entirely normal as it has a very steep peak in the middle and rather long tails compared to a normal distribution.
 Thus, a `student-t` distribution might be a better description of the response-distribution.
 
@@ -435,7 +435,7 @@ marginal_effects(brm1_t, method = "predict")
 
 These plots also look quite similar.
 
-Lets compare the model with the previous gaussian model in terms of predictive performance (`loo-ic`)
+Lets compare the model with the previous Gaussian model in terms of predictive performance (`loo-ic`)
 
 ```{r loo_brm1_t}
 loo_brm1_t <- loo(brm1_t)
